@@ -10,6 +10,7 @@ public class Server {
         this.serverSocket = serverSocket;
     }
 
+    //TODO FIX NAMES BUTTONS MY HAVING MESSAGE SEND TO SERVER AND THEN GETTING A RESPONSE OF STRINGS WITH NAMES
     public void startServer() {
         try {
             while (!serverSocket.isClosed()) {

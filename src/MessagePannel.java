@@ -140,7 +140,7 @@ public class MessagePannel extends JPanel implements ActionListener {
     }
     public void msg_Box() {
 //        drawClients();
-        messageField.setBounds(SCREEN_WIDTH / 2 - MSG_BOX_WIDTH / 2, 500, MSG_BOX_WIDTH, MSG_BOX_HEIGHT);
+        messageField.setBounds(SCREEN_WIDTH / 2 - MSG_BOX_WIDTH / 2, 650, MSG_BOX_WIDTH, MSG_BOX_HEIGHT);
         messageField.setVisible(true);
         messageField.setFont(new Font("Arial", Font.BOLD, 16));
         messageField.setFocusable(true);
@@ -151,6 +151,18 @@ public class MessagePannel extends JPanel implements ActionListener {
             public void actionPerformed(ActionEvent e) {
                 JLabel msg = new JLabel(messageField.getText());
                 currentMessage = messageField.getText();
+
+                //Simple loop to calculate the line break in msg bubbles
+                if (currentMessage.length() > 150) {
+                    int index = 150;
+                    for (int i = index; i >= 0; i--) {
+                        if (currentMessage.charAt(i) == ' ') {
+                            index = i;
+                            break;
+                        }
+                    }
+                    currentMessage = currentMessage.substring(0, index) + "\n" + currentMessage.substring(index);
+                }
                 newMessage = true;
 //                System.out.println("msg: " + messageField.getText());
                 messageField.setText("");
@@ -166,6 +178,7 @@ public class MessagePannel extends JPanel implements ActionListener {
                 lastMessageHeight += size.height + 10;
 
                 msg.setVisible(true);
+                //Just a check
                 add(msg);
                 repaint();
             }
