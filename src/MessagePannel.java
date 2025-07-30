@@ -185,6 +185,21 @@ public class MessagePannel extends JPanel implements ActionListener {
         });
     }
 
+    public ArrayList<JLabel> messageDivider(String message) {
+        ArrayList<JLabel> ret = new ArrayList<>();
+        for (int i = 0; i < message.length() - 32;) {
+            int index = i+32;
+            for (int j = index; j >= index; j--) {
+                if (message.charAt(j) == ' ') {
+                    index = j;
+                    break;
+                }
+            }
+//            ret.add(new JLabel(message.substring(i,index)).setBounds())
+
+        }
+    }
+
     public void receiveMessage(String message) {
         JLabel msg = new JLabel(message);
         msg.setFont(new Font("Arial", Font.BOLD, 16));
