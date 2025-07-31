@@ -162,8 +162,15 @@ public class MessagePannel extends JPanel implements ActionListener {
 //                // Get Dimensions of the msg
 //                Dimension size = msg.getPreferredSize();
 //                msg.setBounds(SCREEN_WIDTH - (int) size.getWidth() - 25, lastMessageHeight, (int) size.getWidth(), (int) size.getHeight());
-                ArrayList<JLabel> message = messageDivider(currentMessage);
+                ArrayList<JLabel> message = messageDivider(currentMessage, true);
                 Dimension size = message.get(0).getPreferredSize();
+                //Loop through each message to find the length
+
+                for (JLabel line : message) {
+                    if (line.getPreferredSize().getWidth() > size.getWidth()) {
+                        size = line.getPreferredSize();
+                    }
+                }
                 messages.add(new MessageBubble(SCREEN_WIDTH - (int) size.getWidth() - 35, lastMessageHeight + 5, (int) size.getWidth() +20, ((int) size.getHeight() - 3) * message.size() + 8,
                         ARCWIDTH, ARCHEIGHT, new Color(3, 162, 233)));
 
@@ -181,25 +188,37 @@ public class MessagePannel extends JPanel implements ActionListener {
         });
     }
 
-    public ArrayList<JLabel> messageDivider(String message) {
+    public ArrayList<JLabel> messageDivider(String message, boolean myMessage) {
         ArrayList<JLabel> ret = new ArrayList<>();
         int messageHeight = lastMessageHeight;
         if (message.length() > 26){
-            for (int i = 0; i < message.length() - 26;) {
+            for (int i = 0; i < message.length();) {
                 int index = i+26;
-                for (int j = index; j >= index; j--) {
-                    if (message.charAt(j) == ' ') {
-                        index = j;
-                        break;
+                if (message.length() - i < 26) {
+                    index = message.length();
+                }
+                else {
+                    index = i+26;
+                    for (int j = index; j >= i; j--) {
+                        if (message.charAt(j) == ' ') {
+                            index = j+1;
+                            break;
+                        }
                     }
                 }
+
 
                 System.out.println("message: " + message.substring(i, index));
                 JLabel lineMessage = new JLabel(message.substring(i, index));
                 lineMessage.setFont(new Font("Arial", Font.BOLD, 16));
                 Dimension size = lineMessage.getPreferredSize();
                 System.out.println(SCREEN_WIDTH - (int) size.getWidth() - 25);
-                lineMessage.setBounds(365, messageHeight + 7, (int) size.getWidth() + 100, (int) size.getHeight());
+                if (myMessage) {
+                    lineMessage.setBounds(375, messageHeight + 7, (int) size.getWidth() + 100, (int) size.getHeight());
+                }
+                else {
+                    lineMessage.setBounds(35, messageHeight + 7, (int) size.getWidth() + 100, (int) size.getHeight());
+                }
                 ret.add(lineMessage);
                 messageHeight+=15;
 //                lastMessageHeight+=10;
@@ -212,7 +231,12 @@ public class MessagePannel extends JPanel implements ActionListener {
             JLabel lineMessage = new JLabel(message);
             lineMessage.setFont(new Font("Arial", Font.BOLD, 16));
             Dimension size = lineMessage.getPreferredSize();
-            lineMessage.setBounds(SCREEN_WIDTH - (int) size.getWidth() - 25, lastMessageHeight + 7, (int) size.getWidth(), (int) size.getHeight());
+            if (myMessage) {
+                lineMessage.setBounds(SCREEN_WIDTH - (int) size.getWidth() - 25, lastMessageHeight + 7, (int) size.getWidth(), (int) size.getHeight());
+            }
+            else {
+                lineMessage.setBounds(35, lastMessageHeight + 7, (int) size.getWidth(), (int) size.getHeight());
+            }
             ret.add(lineMessage);
 //            lastMessageHeight+=10;
         }
@@ -221,20 +245,40 @@ public class MessagePannel extends JPanel implements ActionListener {
     }
 
     public void receiveMessage(String message) {
-        JLabel msg = new JLabel(message);
-        msg.setFont(new Font("Arial", Font.BOLD, 16));
+//        JLabel msg = new JLabel(message);
+//        msg.setFont(new Font("Arial", Font.BOLD, 16));
 
         // Get Dimensions of the msg
-        Dimension size = msg.getPreferredSize();
-        msg.setBounds(35, lastMessageHeight, (int) size.getWidth(), (int) size.getHeight());
-
-        messages.add(new MessageBubble(25, lastMessageHeight - 5, (int) size.getWidth() + 20, (int) size.getHeight() + 8,
+//        Dimension size = msg.getPreferredSize();
+//        msg.setBounds(35, lastMessageHeight, (int) size.getWidth(), (int) size.getHeight());
+//
+//        messages.add(new MessageBubble(25, lastMessageHeight - 5, (int) size.getWidth() + 20, (int) size.getHeight() + 8,
+//                ARCWIDTH, ARCHEIGHT, Color.GRAY));
+//
+//        lastMessageHeight += size.height + 10;
+//
+//        msg.setVisible(true);
+//        add(msg);
+//        repaint();
+        ArrayList<JLabel> lines = messageDivider(message, false);
+        Dimension size = lines.get(0).getPreferredSize();
+        for (JLabel line : lines) {
+            if (line.getPreferredSize().getWidth() > size.getWidth()) {
+                size = line.getPreferredSize();
+            }
+        }
+        messages.add(new MessageBubble(25, lastMessageHeight + 5, (int) size.getWidth() + 20, ((int) size.getHeight() - 3) * lines.size() + 8,
                 ARCWIDTH, ARCHEIGHT, Color.GRAY));
 
-        lastMessageHeight += size.height + 10;
+        lastMessageHeight += size.height * lines.size() + 10;
 
-        msg.setVisible(true);
-        add(msg);
+
+//                msg.setVisible(true);
+//                add(msg);
+        for (JLabel msg: lines) {
+            msg.setVisible(true);
+            add(msg);
+        }
         repaint();
     }
 
